@@ -1,6 +1,6 @@
 output "vpc_id"{
 
-    value=module.vpc.vpc_id
+    value=module.vpc.aws_vpc
 }
 
 output "public_subnet_ids"{
