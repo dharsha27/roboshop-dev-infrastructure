@@ -53,6 +53,6 @@ data "aws_ssm_parameter" "vpn_sg_id" {
 
 # to get the current IP address
 
-data "http" "public_ip"{
-    url = "https://whatismyipaddress.com/"
+data "http" "public_ip" {
+  url = "https://whatismyipaddress.com/"
 }
