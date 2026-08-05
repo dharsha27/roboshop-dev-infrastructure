@@ -317,7 +317,7 @@ resource "aws_security_group_rule" "bastion_my_public_ip" {
   to_port     = 22
   protocol    = "tcp"
   # cidr_blocks = ["3.237.177.111/32"]
-  cidr_block  = ["0.0.0.0/0"]
+  cidr_blocks  = ["0.0.0.0/0"]
   #source_security_group_id = local.vpn_sg_id
   security_group_id = local.bastion_sg_id
 }
