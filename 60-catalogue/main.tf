@@ -119,9 +119,9 @@ resource "aws_lb_target_group" "test" {
    healthy_threshold = 2
    interval = 10
    matcher ="200-299"
-   path = /health
+   path = "/health"
    port=8080
-   protocol ="http"
+   protocol ="http"  
    timeout=5
    unhealthy_threshold=2
 
