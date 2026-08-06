@@ -39,3 +39,14 @@ resource "terraform_data" "catalogue" {
     ]
   }
 }
+
+
+# 2. Control the runtime power state separately
+resource "aws_ec2_instance_state" "my_server_state" {
+  instance_id = aws_instance.catalogue.id
+  state       = "stopped" # Valid options: "running" or "stopped"
+  depends_on  = [terraform_data.catalogue]
+
+  # Optional: set to true if you need to force-kill a frozen instance
+  # force = false 
+}
