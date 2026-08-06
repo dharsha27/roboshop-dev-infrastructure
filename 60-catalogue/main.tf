@@ -74,7 +74,7 @@ resource "aws_launch_template" "catalogue" {
   instance_type = "t3.micro"
   update_default_version = true
   vpc_security_group_ids = [local.catalogue_sg_id]
-  
+
 # Once instance are created these will become the instance tags
   tag_specifications {
     resource_type = "instance"
@@ -85,7 +85,7 @@ resource "aws_launch_template" "catalogue" {
     },
     local.common_tags
   )
-
+}
  # Once instance are created these will become the volume tags
    tag_specifications {
     resource_type = "volume"
