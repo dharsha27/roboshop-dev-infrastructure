@@ -35,18 +35,32 @@ resource "terraform_data" "catalogue" {
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/bootstrap.sh",
-      "sudo sh /tmp/bootstrap.sh catalogue ${var.environment}"
+      "sudo sh /tmp/bootstrap.sh catalogue ${var.environment}-${var.app_version}"
     ]
   }
 }
 
 
 # 2. Control the runtime power state separately
-resource "aws_ec2_instance_state" "my_server_state" {
+resource "aws_ec2_instance_state" "catalogue" {
   instance_id = aws_instance.catalogue.id
   state       = "stopped" # Valid options: "running" or "stopped"
   depends_on  = [terraform_data.catalogue]
 
   # Optional: set to true if you need to force-kill a frozen instance
   # force = false 
+}
+
+resource "aws_ami_from_instance" "catalogue"{
+  name = "${local.common_name}-catalogue-${var.app_version}-${aws_instance.catalogue.id}"
+  source_instance_id= aws_instance.catalogue.id
+  depends_on= [aws_ec2_instance_state.catalogue]
+
+ tags = merge(
+    {
+        Name = "${local.common_name}-catalogue-${var.app_version}-${aws_instance.catalogue.id}"
+    },
+    local.common_tags
+  )
+
 }
