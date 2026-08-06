@@ -96,7 +96,7 @@ resource "aws_launch_template" "catalogue" {
     },
     local.common_tags
   )
-
+ }
 # Launch template resource tags
 tags = merge(
     {
