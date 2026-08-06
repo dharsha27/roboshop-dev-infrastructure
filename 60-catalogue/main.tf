@@ -64,3 +64,45 @@ resource "aws_ami_from_instance" "catalogue"{
   )
 
 }
+
+
+resource "aws_launch_template" "catalogue" {
+
+  name = "${local.common_name}-catalogue"
+  image_id = aws_ami_from_instance.catalogue.id  #AMI ID
+  instance_initiated_shutdown_behavior = "terminate"
+  instance_type = "t3.micro"
+  update_default_version = true
+  vpc_security_group_ids = [local.catalogue_sg_id]
+  
+# Once instance are created these will become the instance tags
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = merge(
+    {
+        Name = "${local.common_name}-catalogue-${var.app_version}-${aws_instance.catalogue.id}"
+    },
+    local.common_tags
+  )
+
+ # Once instance are created these will become the volume tags
+   tag_specifications {
+    resource_type = "volume"
+
+    tags = merge(
+    {
+        Name = "${local.common_name}-catalogue-${var.app_version}-${aws_instance.catalogue.id}"
+    },
+    local.common_tags
+  )
+
+# Launch template resource tags
+tags = merge(
+    {
+        Name = "${local.common_name}-catalogue-${var.app_version}-${aws_instance.catalogue.id}"
+    },
+    local.common_tags
+  )
+
+}
