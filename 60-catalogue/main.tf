@@ -129,58 +129,56 @@ resource "aws_lb_target_group" "test" {
  }
 }
 
-# resource "aws_placement_group" "test" {
-#   name     = "${local.common_name}-catalogue"
-#   strategy = "cluster"
-# }
 
-# resource "aws_autoscaling_group" "catalogue" {
-#   name                      = "${local.common_name}-catalogue"
-#   max_size                  = 10
-#   min_size                  = 1
-#   health_check_grace_period = 300
-#   health_check_type         = "ELB"
-#   desired_capacity          = 4
-#   force_delete              = false
+resource "aws_autoscaling_group" "catalogue" {
+  name                      = "${local.common_name}-catalogue"
+  max_size                  = 10
+  min_size                  = 1
+  health_check_grace_period = 120
+  health_check_type         = "ELB"
+  desired_capacity          = 2
+  force_delete              = false
  
-#   launch_template {
-#     id      = aws_launch_template.catalogue.id
-#     version = aws_launch_template.example.latest_version
-#   }
-#   vpc_zone_identifier       = [aws_subnet.example1.id, aws_subnet.example2.id]
+  launch_template {
+    id      = aws_launch_template.catalogue.id
+    version = "$Latest"
+  }
+  vpc_zone_identifier       = [local.private_subnet_id]
+  target_group_arns=[aws_lb_target_group.catalogue.arn]
+  
+ dynamic "tag" {
+    for_each = merge (
+      {
+        Name= "${local.common_name}-catalogue"
+      },
+      local.common_tags
+    )
+    content {
+    key                 = tag.key
+    value               = tag.value
+    propagate_at_launch = true
+    }
+    
+  }
 
-#   instance_maintenance_policy {
-#     min_healthy_percentage = 90
-#     max_healthy_percentage = 120
-#   }
+  timeouts {
+    delete = "15m"
+  }
 
-#   initial_lifecycle_hook {
-#     name                 = "foobar"
-#     default_result       = "CONTINUE"
-#     heartbeat_timeout    = 2000
-#     lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
+  
+}
 
-#     notification_metadata = jsonencode({
-#       foo = "bar"
-#     })
 
-#     notification_target_arn = "arn:aws:sqs:us-east-1:444455556666:queue1*"
-#     role_arn                = "arn:aws:iam::123456789012:role/S3Access"
-#   }
+resource "aws_autoscaling_policy" "catalogue" {
+  # ... other configuration ...
 
-#   tag {
-#     key                 = "foo"
-#     value               = "bar"
-#     propagate_at_launch = true
-#   }
+  autoscaling_group_name = aws_autoscaling_group.catalogue.name
+  name = "${local.common_name}-catalogue"
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
 
-#   timeouts {
-#     delete = "15m"
-#   }
-
-#   tag {
-#     key                 = "lorem"
-#     value               = "ipsum"
-#     propagate_at_launch = false
-#   }
-# }
+    target_value = 40.0
+  }
+}
