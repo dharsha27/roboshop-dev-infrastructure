@@ -18,8 +18,8 @@ variable "app_version" {
     default = "v3"
 }
 
-variable "vpc_id" {
-    
-    default = "v3"
-}
+# variable "vpc_id" {
+
+#     default = "v3"
+# }
 
