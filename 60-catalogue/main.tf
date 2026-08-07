@@ -207,7 +207,7 @@ resource "aws_lb_listener_rule" "catalogue" {
 }
 
 
-resource "aws_ec2_instance_state" "catalogue" {
+resource "aws_ec2_instance_state" "catalogue-running" {
   instance_id = aws_instance.catalogue.id
   state       = "running" # Change from "stopped" to "running"
 }
