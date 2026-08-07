@@ -107,7 +107,7 @@ tags = merge(
 
 }
 
-resource "aws_lb_target_group" "test" {
+resource "aws_lb_target_group" "catalogue" {
   name     = "${local.common_name}-catalogue"
   port     = 8080
   protocol = "HTTP"
@@ -174,11 +174,13 @@ resource "aws_autoscaling_policy" "catalogue" {
 
   autoscaling_group_name = aws_autoscaling_group.catalogue.name
   name = "${local.common_name}-catalogue"
+  estimated_instance_warmup=120
+  policy_type=TargerTrackingScaling
   target_tracking_configuration {
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
 
-    target_value = 40.0
+    target_value = 75.0
   }
 }
