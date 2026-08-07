@@ -23,9 +23,15 @@ resource "aws_ssm_parameter"  "private_subnet_ids"{
 }
 
 resource "aws_ssm_parameter"  "database_subnet_ids"{
-   name = "/${var.project}-${var.environment}/database_subnet_ids"
+   name = "/database_subnet_ids"
    type = "String"
    value = join(",",module.vpc.database_subnet_ids)
    overwrite=true
 
+} 
+
+resource "aws_ssm_parameter" "backend_alb_listener_arn" {
+  name  = "/${var.project}-${var.environment}/backend_alb_listener_arn"
+  type  = "String"
+  value = aws_lb_listener.backend.arn
 }
