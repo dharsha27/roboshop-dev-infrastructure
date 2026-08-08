@@ -6,8 +6,6 @@ resource "aws_lb" "backend_alb" {
   subnets            = local.private_subnet_ids
 
   enable_deletion_protection = false
-  # allow_overwrite=true
-
   
 
   tags = merge(
@@ -23,7 +21,7 @@ resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.backend_alb.arn
   port              = "80"
   protocol          = "HTTP"
-  # allow_overwrite=true
+ 
 
   default_action {
     type = "fixed-response"
